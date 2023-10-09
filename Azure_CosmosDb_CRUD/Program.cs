@@ -1,6 +1,10 @@
+using Azure_CosmosDb_CRUD.Model;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.Configure<AzureMode>(builder.Configuration.GetSection("AzureCosmosDb"));
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -2,6 +2,8 @@
 using Azure_CosmosDb_CRUD.Model;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System.ComponentModel;
 using System.Linq.Expressions;
 
@@ -11,16 +13,22 @@ namespace Azure_CosmosDb_CRUD.Controllers
     [ApiController]
     public class EmployeeController : ControllerBase
     {
-        private readonly string CosmosDBAccountUri = "https://yuva-db.documents.azure.com:443/";
+        private readonly AzureMode _azureMode;
+        public EmployeeController(IOptions<AzureMode> azureMode)
+        {
+            _azureMode = azureMode.Value;
+        }
+
+        /*private readonly string CosmosDBAccountUri = "https://yuva-db.documents.azure.com:443/";
         private readonly string CosmosDBAccountPrimaryKey = "YOSFn5acYLMIHOgIA6uBTJl8fuu59srCV9Q94lp9PSpFQ5gbSrfXPEC25A2PocaGNNJwjZXsOD7tACDbnsS79Q==";
         private readonly string CosmosDbName = "EmployeManagementDb";
-        private readonly string CosmosDbContainerName = "Employee";
+        private readonly string CosmosDbContainerName = "Employee";*/
 
 
         private Microsoft.Azure.Cosmos.Container ContainerClient()
         {
-            CosmosClient cosmosDbClient = new CosmosClient(CosmosDBAccountUri, CosmosDBAccountPrimaryKey);
-            Microsoft.Azure.Cosmos.Container containerClient = cosmosDbClient.GetContainer(CosmosDbName, CosmosDbContainerName);
+            CosmosClient cosmosDbClient = new CosmosClient(_azureMode.CosmosDBAccountUri, _azureMode.CosmosDBAccountPrimaryKey);
+            Microsoft.Azure.Cosmos.Container containerClient = cosmosDbClient.GetContainer(_azureMode.CosmosDbName, _azureMode.CosmosDbContainerName);
             return containerClient;
         }
 
@@ -37,7 +45,7 @@ namespace Azure_CosmosDb_CRUD.Controllers
 
                 var container = ContainerClient();
                 var response = await container.CreateItemAsync(employee, new PartitionKey(employee.department));
-                return Ok(response.Resource); // Return the created item.
+                return Ok(response.Resource); 
             }
             catch (Exception ex)
             {
@@ -85,10 +93,7 @@ namespace Azure_CosmosDb_CRUD.Controllers
                 var container = ContainerClient();
                 ItemResponse<EmployeeModel> res = await container.ReadItemAsync<EmployeeModel>(emp.id, new PartitionKey(partitionKey));
 
-                //Get Existing Item
                 var existingItem = res.Resource;
-
-                //Replace existing item values with new values 
                 existingItem.Name = emp.Name;
                 existingItem.Country = emp.Country;
                 existingItem.City = emp.City;
