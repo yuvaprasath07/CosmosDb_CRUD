@@ -19,10 +19,7 @@ namespace Azure_CosmosDb_CRUD.Controllers
             _azureMode = azureMode.Value;
         }
 
-        /*private readonly string CosmosDBAccountUri = "https://yuva-db.documents.azure.com:443/";
-        private readonly string CosmosDBAccountPrimaryKey = "YOSFn5acYLMIHOgIA6uBTJl8fuu59srCV9Q94lp9PSpFQ5gbSrfXPEC25A2PocaGNNJwjZXsOD7tACDbnsS79Q==";
-        private readonly string CosmosDbName = "EmployeManagementDb";
-        private readonly string CosmosDbContainerName = "Employee";*/
+
 
 
         private Microsoft.Azure.Cosmos.Container ContainerClient()
